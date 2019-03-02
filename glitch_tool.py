@@ -6,8 +6,8 @@ import math
 
 # dependency for file selection
 import tkinter as tk
+from tkinter import *
 from tkinter import filedialog
-
 from os import path
 
 def writeFile(fileByteList, fileNum, iteration, bytesTochange, seed):
@@ -161,27 +161,85 @@ transforms = {
     "move": moveBytes
 }
 
-# setup tkinter
-root = tk.Tk()
-root.withdraw()
-
 # Setup argparser
 parser = argparse.ArgumentParser(description="Do terrible things to data.")
 
 # Required arguments
+a = Tk()
+a.withdraw()
 print("Opening file selection prompt...")
 file_path = filedialog.askopenfilename()
-print("Choosing mode...")
-parser.add_argument("-m", "--mode", help="File change mode")
-parser.add_argument("-i", "--infile", default=file_path ,help="Input folder")
+
+# GUI for option selection
+root = Tk()
+root.title("Args")
+
+# def printvars():
+#     args = [mode.get(), npic.get(), nrdm.get(), nbyt.get(), nrep.get()]
+#     print(args)
+#     root.destroy()
+
+# window.geometry("700x400")
+
+mainframe = Frame(root)
+mainframe.grid(column=0,row=0, sticky=(N,W,E,S))
+mainframe.columnconfigure(0, weight = 1, pad=30)
+mainframe.columnconfigure(1, weight = 1, pad=30)
+mainframe.columnconfigure(2, weight = 1, pad=30)
+mainframe.rowconfigure(0, weight = 1, pad=20)
+mainframe.rowconfigure(2, weight = 1, pad=20)
+mainframe.rowconfigure(4, weight = 1, pad=20)
+mainframe.pack(pady = 50, padx = 50)
+
+choices = {'change', 'reverse', 'repeat', 'remove', 'zero', 'insert', 'replace', 'move'}
+mode = StringVar(root)
+mode.set("change") # default value
+
+modeMenu = OptionMenu(mainframe, mode, *choices)
+Label(mainframe, text="Choose a mode").grid(sticky='w', row = 1, column = 0)
+modeMenu.grid(sticky=('w','n'), row = 2, column = 0)
+
+Label(mainframe, text="How many pictures to generate?", anchor='w').grid(sticky='w', row = 1, column = 1)
+npic = Entry(mainframe, width=20)
+npic.grid(sticky=('w','n'), row = 2, column = 1)
+npic.insert(0, "1")
+
+Label(mainframe, text="How many random changes?", anchor='w').grid(sticky='w', row = 1, column = 2)
+nrdm = Entry(mainframe, width=20)
+nrdm.grid(sticky=('w','n'), row = 2, column = 2)
+
+Label(mainframe, text="How many bytes to change each change?", anchor='w').grid(sticky='w', row = 3, column = 0)
+nbyt = Entry(mainframe, width=20)
+nbyt.grid(sticky=('w','n'), row = 4, column = 0)
+
+Label(mainframe, text="How many bytes to repeat?", anchor='w').grid(sticky='w', row = 3, column = 1)
+nrep = Entry(mainframe, width=20)
+nrep.grid(sticky=('w','n'), row = 4, column = 1)
+
+Button(mainframe, text='ADD',bd=10,command=root.quit).grid(row = 5, column = 1)
+root.mainloop()
+
+# def cont():
+parser.add_argument("-m", "--mode", default=mode.get(), help="File change mode")
+parser.add_argument("-i", "--infile", default=file_path, help="Input folder")
+
+# defaulting
+vals = [npic.get(), nrdm.get(), nbyt.get(), nrep.get()]
+print(vals)
+npic = int(vals[0])
+for v in range(1,3):
+    if vals[v] is '' : vals[v] = None
+nrdm = vals[1]
+nbyt = vals[1]
+nrep = vals[1]
 
 # Optional arguments
 parser.add_argument("-o", "--outdir", default="./", help="Output folder")
 parser.add_argument("-s", "--seed", type=int, help="Seed to use for random")
-parser.add_argument("-a", "--amount", type=int, default=1, help="Amount of new files to create")
-parser.add_argument("-c", "--changes", help="Amount of random changes. Can be in a range, like '1-10'.")
-parser.add_argument("-b", "--bytes", help="Amount of bytes to change each change. Can be in a range, like '1-10'.")
-parser.add_argument("-r", "--repeat-width", help="Amount of bytes to repeat. Can be in a range, like '1-10'.")
+parser.add_argument("-a", "--amount", type=int, default=npic, help="Amount of new files to create")
+parser.add_argument("-c", "--changes", default=nrdm, help="Amount of random changes. Can be in a range, like '1-10'.")
+parser.add_argument("-b", "--bytes", default=nbyt, help="Amount of bytes to change each change. Can be in a range, like '1-10'.")
+parser.add_argument("-r", "--repeat-width", default=nrep, help="Amount of bytes to repeat. Can be in a range, like '1-10'.")
 parser.add_argument("-q", "--quiet", default=False, action="store_true", help="Surpress logging")
 parser.add_argument("--output-iterations", type=int, default=0, help="How many iterations between outputs")
 
@@ -192,3 +250,5 @@ print(args)
 # args["infile"] = file_path
 
 main()
+
+# Label(text='Mode').place(x=50, y=30)

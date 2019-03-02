@@ -1,23 +1,18 @@
+# Updates
+I love this tool that was created, though having to use it through the terminal was a bit annoying. As a result, I GUIfied most of the input arguments for easier input, albeit slower as well. The convenience in my opinion however outweighs the speed.
+
 # glitch-tool
 
 glitch-tool is a simple Python script for messing with files in a few different ways. This tool was created for making glitch art, more specifically doing databending. You can read more about my results in [this blog post](https://tobloef.com/fun/glitch-art). This tool was mostly created for this one-time use and therefore the code quality isn't great. 
 
 ## Usage
 ```
-usage: glitch_tool.py [-h] [-i INFILE] [-m MODE] [-o OUTDIR] [-s SEED]
-                      [-a AMOUNT] [-c CHANGES] [-b BYTES] [-r REPEAT_WIDTH]
+usage: glitch_tool.py [-h] [-o OUTDIR] [-s SEED]
                       [-q] [--output-iterations OUTPUT_ITERATIONS]
 
-Required arguments:
-  -i, --infile         Input file
-  -m, --mode           File change mode
-  -o, --outdir         Output folder
 Optional arguments:
+  -o, --outdir         Output folder
   -s, --seed           Seed to use for random
-  -a, --amount         Amount of new files to create
-  -c, --changes        Amount of random changes. Can be in a range, like 1-10.
-  -b, --bytes          Amount of bytes to change each change. Can be in a range, like 1-10.
-  -r, --repeat-width   Amount of bytes to repeat. Can be in a range, like 1-10.
   -q, --quiet          Surpress logging
   --output-iterations  How many changes between outputs
 ```
