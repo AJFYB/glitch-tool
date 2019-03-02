@@ -3,12 +3,26 @@ import random
 import sys
 import re
 import math
+
+# dependency for file selection
+import tkinter as tk
+from tkinter import filedialog
+
 from os import path
 
 def writeFile(fileByteList, fileNum, iteration, bytesTochange, seed):
     filename, extension = path.splitext(args.infile)
-    filename = filename.split("\\")[-1]
+
+    # Used due to difference between / and \ in file paths
+    split_by = ""
+    if "/" in filename: split_by = "/" 
+    else: split_by = "\\"
+
+    filename = filename.split(split_by)[-1]
+
+    print(filename)
     outPath = f"{args.outdir}{filename}_m={args.mode}_b={bytesTochange}_s={seed}_n={fileNum}_i={iteration}{extension}"
+
     if (not args.quiet):
         print("Writing file to " + outPath)
     open(outPath, "wb").write(bytes(fileByteList))
@@ -147,11 +161,20 @@ transforms = {
     "move": moveBytes
 }
 
+# setup tkinter
+root = tk.Tk()
+root.withdraw()
+
 # Setup argparser
 parser = argparse.ArgumentParser(description="Do terrible things to data.")
+
 # Required arguments
-parser.add_argument("-i", "--infile", help="Input file")
+print("Opening file selection prompt...")
+file_path = filedialog.askopenfilename()
+print("Choosing mode...")
 parser.add_argument("-m", "--mode", help="File change mode")
+parser.add_argument("-i", "--infile", default=file_path ,help="Input folder")
+
 # Optional arguments
 parser.add_argument("-o", "--outdir", default="./", help="Output folder")
 parser.add_argument("-s", "--seed", type=int, help="Seed to use for random")
@@ -161,6 +184,11 @@ parser.add_argument("-b", "--bytes", help="Amount of bytes to change each change
 parser.add_argument("-r", "--repeat-width", help="Amount of bytes to repeat. Can be in a range, like '1-10'.")
 parser.add_argument("-q", "--quiet", default=False, action="store_true", help="Surpress logging")
 parser.add_argument("--output-iterations", type=int, default=0, help="How many iterations between outputs")
+
+# args init
 args = parser.parse_args()
+print(args)
+
+# args["infile"] = file_path
 
 main()
