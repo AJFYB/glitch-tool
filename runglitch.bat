@@ -1,0 +1,1 @@
+python glitch_tool.py -o glitches/
