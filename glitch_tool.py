@@ -37,12 +37,30 @@ def messWithFile(originalByteList, iterations, bytesToChange, repeatWidth, fileN
         iteration = i+1
         if (args.mode == "repeat"):
             newByteList = repeatBytes(newByteList, bytesToChange, repeatWidth)
+        elif (args.mode == "all"):
+            newByteList = allmess(newByteList, bytesToChange, repeatWidth)
         else:
             newByteList = transforms[args.mode](newByteList, bytesToChange)
         if (args.output_iterations > 0 and iteration%args.output_iterations == 0):
             writeFile(newByteList, fileNum, iteration, bytesToChange, seed)
     writeFile(newByteList, fileNum, iteration, bytesToChange, seed)
         
+def allmess(byteList, bytesToChange, repeatWidth):
+    return changeBytes(
+        reverseBytes(
+            repeatBytes(
+                removeBytes(
+                    zeroBytes(
+                        insertBytes(
+                            replaceBytes(
+                                moveBytes(byteList, bytesToChange), bytesToChange)
+                            , bytesToChange)
+                        , bytesToChange)
+                    , bytesToChange)
+                , bytesToChange, repeatWidth)
+            , bytesToChange)
+        , bytesToChange)
+
 # Transforms
 
 def changeBytes(byteList, bytesToChange):
@@ -137,7 +155,7 @@ def main():
     if (not args.mode):
         print("Error: No mode specified")
         return False
-    if (not (args.mode in transforms)):
+    if (not ((args.mode in transforms) or 'all')):
         print("Error: Invalid mode")
         return False
     minChanges = 1
@@ -220,7 +238,7 @@ mainframe.rowconfigure(2, weight = 1, pad=20)
 mainframe.rowconfigure(4, weight = 1, pad=20)
 mainframe.pack(pady = 50, padx = 50)
 
-choices = {'change', 'reverse', 'repeat', 'remove', 'zero', 'insert', 'replace', 'move'}
+choices = {'change', 'reverse', 'repeat', 'remove', 'zero', 'insert', 'replace', 'move', 'all'}
 mode = StringVar(root)
 mode.set("change") # default value
 
