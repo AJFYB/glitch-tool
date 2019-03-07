@@ -27,9 +27,10 @@ def writeFile(fileByteList, fileNum, iteration, bytesTochange, seed):
         print("Writing file to " + outPath)
     open(outPath, "wb").write(bytes(fileByteList))
 
+# Main function for glitching
 def messWithFile(originalByteList, iterations, bytesToChange, repeatWidth, fileNum):
     newByteList = [b for b in originalByteList]
-    iteration = 1
+    iteration = 0
     seed = args.seed or random.randrange(sys.maxsize)
     random.seed(seed)
     for i in range(iterations):
@@ -46,37 +47,57 @@ def messWithFile(originalByteList, iterations, bytesToChange, repeatWidth, fileN
 
 def changeBytes(byteList, bytesToChange):
     pos = random.randint(0, len(byteList) - bytesToChange)
-    chunk = [random.randint(0, 255) for i in range(bytesToChange)]
+    
+    # List of random bytes
+    chunk = [random.randint(0, 255) for i in range(bytesToChange)] 
+
+    # Replacing range of bytes in file w/ chunk
     byteList[pos:pos+bytesToChange] = chunk
+
     return byteList
 
 def reverseBytes(byteList, bytesToChange):
     pos = random.randint(0, len(byteList) - bytesToChange)
+
+    # List of reversed bytes from file
     chunk = byteList[pos:pos+bytesToChange][::-1]
+
+    # Replacing range of bytes in file w/ chunk
     byteList[pos:pos+bytesToChange] = chunk
     return byteList
 
 def repeatBytes(byteList, bytesToChange, repeatWidth):
     pos = random.randint(0, len(byteList) - bytesToChange)
     chunk = []
+
+    # For example, if the repeat width is 5 bytes, and 30 bytes are to be changed...
+    # This loop grabs the first 5 bytes and repeats it 30/5=6 times.
     for i in range(math.ceil(bytesToChange/repeatWidth)):
         chunk.extend(byteList[pos:pos+repeatWidth])
+    
     byteList[pos:pos+bytesToChange] = chunk[:bytesToChange]
     return byteList
 
 def removeBytes(byteList, bytesToChange):
     pos = random.randint(0, len(byteList) - bytesToChange)
+
+    # Replaces entire range of bytes with nothing. Literally removing bytes.
     byteList[pos:pos+bytesToChange] = []
+
     return byteList
 
 def zeroBytes(byteList, bytesToChange):
     pos = random.randint(0, len(byteList) - bytesToChange)
+
+    # Self-explanatory. Zero's a range of bytes.
     byteList[pos:pos+bytesToChange] = [0] * bytesToChange
     return byteList
 
 def insertBytes(byteList, bytesToChange):
     pos = random.randint(0, len(byteList))
     chunk = [random.randint(0, 255) for i in range(bytesToChange)]
+
+    # Inserts a chunk of random bytes into the bytelist
     byteList[pos:pos] = chunk
     return byteList
 
@@ -85,14 +106,22 @@ def replaceBytes(byteList, bytesToChange):
     chunk = byteList[pos:pos+bytesToChange]
     old = random.randint(0, 255)
     new = random.randint(0, 255)
+
+    # The chunk is a copy of the bytelist, with one twist.
+    # Every byte with a value of [old] is replaced with [new]
+    # Result? Probably needs a large value for [bytesToChange].
     chunk = [new if b == old else b for b in chunk]
     byteList[pos:pos+bytesToChange] = chunk
     return byteList
 
 def moveBytes(byteList, bytesToChange):
     pos = random.randint(0, len(byteList) - bytesToChange)
+    
+    # Literally grabs a chunk of bytes, zero'ing it out in the bytelist...
     chunk = byteList[pos:pos+bytesToChange]
     byteList[pos:pos+bytesToChange] = []
+
+    # Then copies the chunk somewhere else within the bytelist.
     newPos = random.randint(0, len(byteList))
     byteList[newPos:newPos] = chunk
     return byteList
